@@ -20,8 +20,13 @@ namespace Password_Manager.SaveData
         public List<Password> Loader()
         {
             string fileName = "PasswordData.json";
-            string jsonString = File.ReadAllText(fileName);
-            List<Password> passwords = JsonSerializer.Deserialize<List<Password>>(jsonString);
+            List<Password> passwords = new List<Password>();
+            if (File.Exists(fileName))
+            {
+                string jsonString = File.ReadAllText(fileName);
+                passwords = JsonSerializer.Deserialize<List<Password>>(jsonString);
+            }
+
             return passwords;
         }
     }

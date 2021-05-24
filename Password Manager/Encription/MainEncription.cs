@@ -82,5 +82,7 @@ namespace Password_Manager.Encription
                 throw new ArgumentNullException("Cipher");
             }
         }
+
+
     }
 }
