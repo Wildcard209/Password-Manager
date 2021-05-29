@@ -4,9 +4,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Password_Manager.Encription
+namespace Password_Manager.Secruity
 {
-    public class MainEncription
+    public class PasswordEncription
     {
         public byte[] EncryptStringToBytes(string Password, byte[] Key, byte[] IV)
         {
@@ -32,20 +32,20 @@ namespace Password_Manager.Encription
             return Chiper;
         }
 
-        public string DecryptSrtingFromBytes(byte[] Cipher, byte[] Key, byte[] IV)
+        public string DecryptSrtingFromBytes(byte[] cipher, byte[] key, byte[] IV)
         {
-            CheckInput(Cipher);
-            CheckKeyAndIV(Key, IV);
+            CheckInput(cipher);
+            CheckKeyAndIV(key, IV);
 
             string Password = null;
 
             using Aes aes = Aes.Create();
-            aes.Key = Key;
+            aes.Key = key;
             aes.IV = IV;
 
             ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
 
-            using (MemoryStream msDecrypt = new MemoryStream(Cipher))
+            using (MemoryStream msDecrypt = new MemoryStream(cipher))
             {
                 using CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
                 using StreamReader srDecrypt = new StreamReader(csDecrypt);
@@ -55,11 +55,11 @@ namespace Password_Manager.Encription
             return Password;
         }
 
-        static private void CheckKeyAndIV(byte[] Key, byte[] IV)
+        static private void CheckKeyAndIV(byte[] key, byte[] IV)
         {
-            if (Key == null || Key.Length <= 0)
+            if (key == null || key.Length <= 0)
             {
-                throw new ArgumentNullException("Key");
+                throw new ArgumentNullException("key");
             }
             if (IV == null || IV.Length <= 0)
             {
@@ -67,19 +67,19 @@ namespace Password_Manager.Encription
             }
         }
 
-        static private void CheckInput(string Password)
+        static private void CheckInput(string password)
         {
-            if (Password == null || Password.Length <= 0)
+            if (password == null || password.Length <= 0)
             {
-                throw new ArgumentNullException("Password");
+                throw new ArgumentNullException("password");
             }
         }
 
-        static private void CheckInput(byte[] Cipher)
+        static private void CheckInput(byte[] cipher)
         {
-            if (Cipher == null || Cipher.Length <= 0)
+            if (cipher == null || cipher.Length <= 0)
             {
-                throw new ArgumentNullException("Cipher");
+                throw new ArgumentNullException("cipher");
             }
         }
 

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Password_Manager.SaveData;
+using Password_Manager.Secruity;
 
 namespace Project
 {
@@ -12,40 +14,25 @@ namespace Project
     {
         static void Main()
         {
-            string name;
-            string passwordInput;
-            byte[] passwordKey;
-            byte[] passwordEncyptied;
+            MainSaver mainSaver = new MainSaver();
+            HasherData hasherData = new HasherData();
+            PasswordData passwordData = new PasswordData();
 
-            Console.Write("Please input name of application of the password: ");
-            name = Console.ReadLine();
-            Console.Write("Please input password to be enyptid: ");
-            passwordInput = Console.ReadLine();
-            Console.Write("Please input password to be used as the key: ");
-            passwordKey = Encoding.Unicode.GetBytes(Console.ReadLine());
+            PasswordEncription passwordEncription = new PasswordEncription();
+            PasswordHasher passwordHasher = new PasswordHasher();
 
-            Password_Manager.Encription.MainEncription encription = new Password_Manager.Encription.MainEncription();
-            Aes ase = Aes.Create();
+            passwordData.PasswordDataList = mainSaver.Loader();
+            hasherData.HasherDataList = mainSaver.Loader("HasherData.json");
 
-            byte[] salt1 = new byte[8];
+            byte[] hash = passwordHasher.GenerateHash(Encoding.UTF8.GetBytes("password"), hasherData.HasherDataList[0].Salt, hasherData.HasherDataList[0].Iterations);
 
-            using (RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider())
-            {
-                // Fill the array with a random value.
-                rngCsp.GetBytes(salt1);
-            }
+            string test1 = passwordEncription.DecryptSrtingFromBytes(passwordData.PasswordDataList[0].Cipher, passwordHasher.GenerateHash(Encoding.UTF8.GetBytes("password"), hasherData.HasherDataList[0].Salt, hasherData.HasherDataList[0].Iterations), passwordData.PasswordDataList[0].IV);
+            string test2 = passwordEncription.DecryptSrtingFromBytes(passwordData.PasswordDataList[1].Cipher, passwordHasher.GenerateHash(Encoding.UTF8.GetBytes("password"), hasherData.HasherDataList[1].Salt, hasherData.HasherDataList[1].Iterations), passwordData.PasswordDataList[1].IV);
+            string test3 = passwordEncription.DecryptSrtingFromBytes(passwordData.PasswordDataList[2].Cipher, passwordHasher.GenerateHash(Encoding.UTF8.GetBytes("password"), hasherData.HasherDataList[2].Salt, hasherData.HasherDataList[2].Iterations), passwordData.PasswordDataList[2].IV);
 
-            Rfc2898DeriveBytes k1 = new Rfc2898DeriveBytes(passwordKey, salt1,1000);
-
-            passwordEncyptied = encription.EncryptStringToBytes(passwordInput, k1.GetBytes(16), ase.IV);
-
-            Password_Manager.SaveData.PasswordData passwordData = new Password_Manager.SaveData.PasswordData();
-            Password_Manager.SaveData.MainSaver saver = new Password_Manager.SaveData.MainSaver();
-
-            passwordData.PasswordDataList = saver.Loader();
-            passwordData.AddPassword(name, passwordEncyptied, ase.IV);
-
-            saver.Saver(passwordData);
+            Console.WriteLine("Test 1 {0}", test1);
+            Console.WriteLine("Test 2 {0}", test2);
+            Console.WriteLine("Test 3 {0}", test3);
         }
     }
 }

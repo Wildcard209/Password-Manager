@@ -21,7 +21,7 @@ namespace Password_Manager.SaveData
             {
                 Name = Name,
                 Cipher = Chipher,
-                IV = IV
+                IV = IV,
             };
 
             PasswordDataList.Add(password);

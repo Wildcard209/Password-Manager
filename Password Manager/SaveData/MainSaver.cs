@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 
 namespace Password_Manager.SaveData
@@ -12,6 +11,14 @@ namespace Password_Manager.SaveData
         {
             string fileName = "PasswordData.json";
             string jsonString = JsonSerializer.Serialize(passwordData.PasswordDataList);
+            File.WriteAllText(fileName, jsonString);
+
+            Console.WriteLine(File.ReadAllText(fileName));
+        }
+
+        public void Saver(HasherData hasherData, string fileName)
+        {
+            string jsonString = JsonSerializer.Serialize(hasherData.HasherDataList);
             File.WriteAllText(fileName, jsonString);
 
             Console.WriteLine(File.ReadAllText(fileName));
@@ -28,6 +35,18 @@ namespace Password_Manager.SaveData
             }
 
             return passwords;
+        }
+
+        public List<Hasher> Loader(string fileName)
+        {
+            List<Hasher> hashers = new List<Hasher>();
+            if (File.Exists(fileName))
+            {
+                string jsonString = File.ReadAllText(fileName);
+                hashers = JsonSerializer.Deserialize<List<Hasher>>(jsonString);
+            }
+
+            return hashers;
         }
     }
 }
